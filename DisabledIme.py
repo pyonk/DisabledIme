@@ -10,12 +10,15 @@ def setvars():
     us_layout = settings.get("Directory", False)
 
 
-
 class DisabledImeCommand(sublime_plugin.EventListener):
     def on_text_command(self, view, command_name, args):
         setvars()
         name = command_name.lower()
-        if (name == 'exit_insert_mode'):
+        # vintage => name == 'exit_insert_mode'
+        # six => (name = 'six_press_key' and args['key'] == '<Esc>')
+        vintage_escape = name == 'exit_insert_mode'
+        six_escape = (name == 'six_press_key' and args['key'] == '<Esc>')
+        if vintage_escape or six_escape:
             if platform.system() == "Windows":
                 # Ctrl+[ などで Esc のキーマップをしている場合、
                 # Ctrl(キーコード17)を強制的にキー解除していないと、
